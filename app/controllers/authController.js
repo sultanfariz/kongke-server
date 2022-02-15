@@ -1,32 +1,21 @@
 // const { isEmpty, response, hashPassword } = require('../helpers/bcrypt');
-// const { NotFoundError, WrongPasswordError, WrongIdentityError } = require('../exceptions');
-// const { randomString, sendPasswordResetEmail, sendMitraVerifiedEmail } = require('../helpers/nodemailer');
 // const bcrypt = require('bcrypt');
 // const jwt = require('jsonwebtoken');
 const { User } = require('../../database/models');
-// const Mitra = require('../models/Mitra');
-// const Customer = require('../models/Customer');
-// const Admin = require('../models/Admin');
 // const ResetPassword = require('../models/ResetPassword');
 // const { generateAccessToken } = require('../helpers/jwt');
+const { DuplicatedDataError } = require('../exceptions');
 
 module.exports = {
   register: async (req, res) => {
     const { username, password } = req.body;
-    console.log('isExistasasd');
 
     try {
-      // const isExist = await User.findOne({
-      //   where: { username },
-      // });
+      const isExist = await User.findOne({
+        where: { username },
+      });
 
-      // console.log('isExist', isExist);
-
-      // if (isExist) {
-      //   return res.status(400).json({
-      //     message: 'Username already exist',
-      //   });
-      // }
+      if (isExist.id) throw new DuplicatedDataError('Username already exist');
 
       const user = await User.create({
         username,
@@ -38,6 +27,13 @@ module.exports = {
         data: user,
       });
     } catch (error) {
+      if (error.code !== 500) {
+        return res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+      }
+
       return res.status(500).json({
         status: 'error',
         message: error.message,
