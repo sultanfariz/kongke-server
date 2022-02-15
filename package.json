@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "start:dev": "nodemon index.js",
-    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate": "cd ./database | npx sequelize-cli db:migrate | cd ..",
     "prettier": "prettier --check \"{app}/**/*.{js}\"",
     "format": "prettier --write \"{app}/**/*.{js}\""
   },
