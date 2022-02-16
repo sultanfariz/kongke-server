@@ -1,31 +1,17 @@
-const { createServer } = require('http');
 const express = require('express');
-const { Server } = require('socket.io');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const routes = require('./routes');
 
 const app = express();
-const httpServer = createServer(app);
-httpServer.listen(5000, () => {
-  console.log('Server is running on port 5000');
-});
 
-const io = new Server(httpServer, {
-  pingInterval: 10000,
-  pingTimeout: 5000,
-  cookie: false,
-  cors: {
-    origin: '*',
-  },
-});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(helmet());
+app.use(compression());
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
-io.on('connection', (socket) => {
-  console.log('User connected');
+app.use('/api/v1', routes);
 
-  socket.on('chat', (data) => {
-    console.log(data);
-    io.emit('chat', data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-});
+module.exports = app;
