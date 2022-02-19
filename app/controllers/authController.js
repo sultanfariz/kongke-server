@@ -56,7 +56,7 @@ module.exports = {
       user.deletedAt = undefined;
 
       // store the token in user browser cookie
-      res.cookie('token', token, { httpOnly: true });
+      res.cookie('jwt', token, { httpOnly: true });
 
       return res.status(200).json({
         status: 'success',
