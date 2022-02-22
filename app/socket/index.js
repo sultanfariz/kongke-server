@@ -14,7 +14,6 @@ function loadSocket(httpServer) {
   io.use(socketioJwt.authorize({
     secret: process.env.ACCESS_JWT_SECRET,
     handshake: true,
-    // auth_header_required: true
   }));
 
   io.on('connection', (socket) => {
@@ -23,13 +22,21 @@ function loadSocket(httpServer) {
     socket.on('join', (data) => {
       socket.join(data.room);
       console.log(`User ${data.username} joined room ${data.room}`);
-      io.emit('chat', { user: data.user, text: `User ${data.username} joined room ${data.room}` });
+      io.emit('chat', {
+        user: "SYSTEM",
+        text: `User ${data.username} joined room ${data.room}`,
+        date: new Date().valueOf(),
+      });
     });
 
     socket.on('chat', (data) => {
       console.log(data);
       if (data?.user && data?.text)
-        io.emit('chat', { user: data.user, text: data.text });
+        io.emit('chat', {
+          user: data.user,
+          text: data.text,
+          date: new Date().valueOf(),
+        });
     });
 
     socket.on('disconnect', () => {
