@@ -21,10 +21,10 @@ function loadSocket(httpServer) {
 
     socket.on('join', (data) => {
       socket.join(data.room);
-      console.log(`User ${data.username} joined room ${data.room}`);
+      console.log(`User ${data.user} joined room ${data.room}`);
       io.emit('chat', {
         user: "SYSTEM",
-        text: `User ${data.username} joined room ${data.room}`,
+        text: `User ${data.user} joined room ${data.room}`,
         date: new Date().valueOf(),
       });
     });
